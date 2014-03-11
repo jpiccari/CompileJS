@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+
+'use strict';
+
+var fs = require('fs'),
+	Lexer = require('../lib/lexer');
+
+
+function processSource(text) {
+	var l = new Lexer(text),
+		token;
+	while((token = l.nextToken())) {
+		console.log(token);
+		if(token.toString() === 'eof') {
+			break;
+		}
+	}
+}
+
+
+process.argv.splice(2).forEach(function(file) {
+	fs.exists(file, function(exists) {
+		if(exists) {
+			fs.readFile(file, function(error, content) {
+				processSource(content.toString());
+			});
+		}
+	});
+});
