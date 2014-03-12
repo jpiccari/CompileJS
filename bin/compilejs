@@ -6,11 +6,25 @@ var fs = require('fs'),
 	Lexer = require('../lib/lexer');
 
 
+function printToken(token) {
+	var output = [];
+	if(token.type) {
+		output.push(token.type);
+		if(token.value) {
+			output.push(token.value);
+		}
+	}
+	else {
+		output.push('"' + token + '"');
+	}
+	console.log('Token ( ' + output.join(', ') + ' )');
+}
+
 function processSource(text) {
 	var l = new Lexer(text),
 		token;
 	while((token = l.nextToken())) {
-		console.log(token);
+		printToken(token);
 		if(token.toString() === 'eof') {
 			break;
 		}
