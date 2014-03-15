@@ -57,7 +57,6 @@ function processSource(text) {
 }
 
 
-
 if(process.argv[2] !== '-l') {
 	console.error('usage: ' + path.basename(process.argv[1]) + ' -l file ...');
 	process.exit(1);
