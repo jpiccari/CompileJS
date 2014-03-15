@@ -27,6 +27,7 @@
 'use strict';
 
 var fs = require('fs'),
+	path = require('path'),
 	Lexer = require('../lib/lexer');
 
 
@@ -56,12 +57,23 @@ function processSource(text) {
 }
 
 
-process.argv.splice(2).forEach(function(file) {
-	fs.exists(file, function(exists) {
-		if(exists) {
+
+if(process.argv[2] !== '-l') {
+	console.error('usage: ' + path.basename(process.argv[1]) + ' -l file ...');
+	process.exit(1);
+}
+
+
+/* Run lexer on the rest of the arguments */
+process.argv.splice(3).forEach(function(file) {
+	fs.stat(file, function(err, stats) {
+		if(!err && stats.isFile()) {
 			fs.readFile(file, function(error, content) {
 				processSource(content.toString());
 			});
+		}
+		else {
+			console.error('error: ' + path.resolve(file) + ' does not exist or is not a file.');
 		}
 	});
 });
