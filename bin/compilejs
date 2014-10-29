@@ -28,51 +28,24 @@
 
 var fs = require('fs'),
 	path = require('path'),
-	Lexer = require('../lib/lexer');
+	compile = require('../lib/compile');
 
 
-function printToken(token) {
-	var output = [];
-	if(token.type) {
-		output.push(token.type);
-		if(token.value) {
-			output.push(token.value);
-		}
-	}
-	else {
-		output.push('"' + token + '"');
-	}
-	console.log('Token ( ' + output.join(', ') + ' )');
-}
-
-function processSource(text) {
-	var l = new Lexer(text),
-		token;
-	while((token = l.nextToken())) {
-		printToken(token);
-		if(token.toString() === 'eof') {
-			break;
-		}
-	}
-}
-
-
-if(process.argv[2] !== '-l') {
-	console.error('usage: ' + path.basename(process.argv[1]) + ' -l file ...');
+if(!process.argv[2]) {
+	console.error('usage: ' + path.basename(process.argv[1]) + ' [file] ...');
 	process.exit(1);
 }
 
 
-/* Run lexer on the rest of the arguments */
-process.argv.splice(3).forEach(function(file) {
+/* Run compilejs on the rest of the args. */
+process.argv.splice(2).forEach(function(file) {
 	fs.stat(file, function(err, stats) {
 		if(!err && stats.isFile()) {
-			fs.readFile(file, function(error, content) {
-				processSource(content.toString());
-			});
-		}
-		else {
-			console.error('error: ' + path.resolve(file) + ' does not exist or is not a file.');
+			fs.createReadStream(file)
+				.pipe(compile())
+				.pipe(process.stdout);
+		} else {
+			console.error('error: ' + path.resolve(file) + ' does not exist or is not readable.');
 		}
 	});
 });

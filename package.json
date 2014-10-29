@@ -1,0 +1,17 @@
+{
+  "author": "Joshua Piccari",
+  "name": "compilejs",
+  "description": "Experimental JavaScript minifier",
+  "version": "0.1.0-pre",
+  "repository": {
+  	"type" : "git",
+    "url": "https://github.com/jpiccari/CompileJS.git"
+  },
+  "bin": {
+    "compilejs": "./bin/compilejs"
+  },
+  "dependencies": {
+    "escodegen": "^1.4.1",
+    "esprima": "^1.2.2"
+  }
+}
