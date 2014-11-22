@@ -30,22 +30,31 @@
 
 var fs = require('fs'),
 	path = require('path'),
-	compile = require('../lib/compile'),
 	StreamQueue = require('streamqueue'),
+	compile = require('../lib/compile'),
 	input = process.stdin,
-	output = process.stdout;
+	argv = require('yargs')
+		.usage('usage: $0 [--output file] file ...')
+		.help('help', 'Display usage information')
+		.alias('h', 'help')
+		.string('_')
+		.alias('o', 'output')
+		.describe('o', 'Specify output file')
+		.string('o')
+		.count('verbose')
+		.alias('v', 'verbose')
+		.describe('v', 'D\'em debug statements')
+		.argv;
 
 
-/* Assume the rest of the arguments are filenames. */
-if(process.argv.length > 2) {
+/* Read input form files and queue them up or parsing. */
+if(argv._.length) {
 	input = new StreamQueue();
 
-	process.argv.splice(2).forEach(function(file) {
-		var stats = fs.statSync(file);
-
-		if(!stats.isFile()) {
+	argv._.forEach(function(file) {
+		if(!fs.statSync(file).isFile()) {
 			console.error('error: ' + path.resolve(file) + ' does not exist or is not readable.');
-			return;
+			process.exit(1);
 		}
 
 		input.queue(fs.createReadStream(file));
@@ -57,4 +66,4 @@ if(process.argv.length > 2) {
 
 input
 	.pipe(compile())
-	.pipe(output);
+	.pipe(argv.output ? fs.createWriteStream(argv.output) : process.stdout);
