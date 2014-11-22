@@ -34,7 +34,7 @@ var fs = require('fs'),
 	compile = require('../lib/compile'),
 	input = process.stdin,
 	argv = require('yargs')
-		.usage('usage: $0 [--output file] file ...')
+		.usage('usage: $0 [--output file] [file ...]')
 		.help('help', 'Display usage information')
 		.alias('h', 'help')
 		.string('_')
